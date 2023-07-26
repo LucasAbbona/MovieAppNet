@@ -10,15 +10,18 @@ namespace MovieApp.Controllers
     [Route("movie")]
     public class MoviesController : ControllerBase
     {   
-        private string _apiKey = "eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI4ZTcyZjZjYzZmMTIyZTEzZjI5ZGNkYjdmOThlZWI4YyIsInN1YiI6IjY0ODIwNmZhZTI3MjYwMDBlOGJmNjgxYSIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.v6ijSgGSPZeGRimKQmpG1hqo-Q3Sc07-sS-FGgZeCVg";
-     
+        private readonly IConfiguration _configuration;
+        public MoviesController(IConfiguration configuration)
+        {
+            _configuration = configuration;
+        }
         [HttpGet("")]
         public async Task<IActionResult> GetMovie()
         {
-            string url = "https://api.themoviedb.org/3/movie/now_playing?language=en-US&page=1";
+            string url = $"{_configuration["BaseURL"]}movie/now_playing?language=en-US&page=1";
             HttpClient client = new HttpClient();
 
-            client.DefaultRequestHeaders.Add("Authorization", $"Bearer {_apiKey}");
+            client.DefaultRequestHeaders.Add("Authorization", $"Bearer {_configuration["ApiKey"]}");
             var response = await client.GetAsync(url);
             if(response.IsSuccessStatusCode)
             {
@@ -43,9 +46,9 @@ namespace MovieApp.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> GetMovieDetails(int id)
         {
-            string url = $"https://api.themoviedb.org/3/movie/{id}";
+            string url = $"{_configuration["BaseURL"]}movie/{id}";
             HttpClient client = new HttpClient();
-            client.DefaultRequestHeaders.Add("Authorization", $"Bearer {_apiKey}");
+            client.DefaultRequestHeaders.Add("Authorization", $"Bearer {_configuration["ApiKey"]}");
             var response = await client.GetAsync(url);
             if(response.IsSuccessStatusCode)
             {
@@ -70,9 +73,9 @@ namespace MovieApp.Controllers
         [HttpGet("credits/{id}")]
         public async Task<IActionResult> GetSerieCredits(int id)
         {
-            string url = $"https://api.themoviedb.org/3/movie/{id}/credits";
+            string url = $"{_configuration["BaseURL"]}movie/{id}/credits";
             HttpClient client = new HttpClient();
-            client.DefaultRequestHeaders.Add("Authorization", $"Bearer {_apiKey}");
+            client.DefaultRequestHeaders.Add("Authorization", $"Bearer {_configuration["ApiKey"]}");
             var response = await client.GetAsync(url);
             if (response.IsSuccessStatusCode)
             {
@@ -97,9 +100,9 @@ namespace MovieApp.Controllers
         [HttpGet("{id}/recommendations")]
         public async Task<IActionResult> GetRelatedMovies(int id)
         {
-            string url = $"https://api.themoviedb.org/3/movie/{id}/recommendations";
+            string url = $"{_configuration["BaseURL"]}movie/{id}/recommendations";
             HttpClient client = new HttpClient();
-            client.DefaultRequestHeaders.Add("Authorization", $"Bearer {_apiKey}");
+            client.DefaultRequestHeaders.Add("Authorization", $"Bearer {_configuration["ApiKey"]}");
             var response = await client.GetAsync(url);
             if (response.IsSuccessStatusCode)
             {
